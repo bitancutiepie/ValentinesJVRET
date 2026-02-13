@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Valentine's Day!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Indie+Flower&family=Dancing+Script:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Caveat', cursive;
+            overflow: hidden;
+            margin: 0;
+        }
+
+        /* ============ ANIMATIONS ============ */
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20%,
+            60% {
+                transform: translateX(-6px);
+            }
+
+            40%,
+            80% {
+                transform: translateX(6px);
+            }
+        }
+
+        .shake {
+            animation: shake 0.4s ease;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(var(--rot, 0deg));
+            }
+
+            50% {
+                transform: translateY(-6px) rotate(calc(var(--rot, 0deg) + 2deg));
+            }
+        }
+
+        .floating {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse-heart {
+
+            0%,
+            100% {
+                transform: scale(1) rotate(var(--rot, 0deg));
+            }
+
+            50% {
+                transform: scale(1.06) rotate(calc(var(--rot, 0deg) + 1deg));
+            }
+        }
+
+        .pulse-heart {
+            animation: pulse-heart 3s ease-in-out infinite;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(120%);
+            }
+
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes flapOpen {
+            from {
+                transform: rotateX(0deg);
+            }
+
+            to {
+                transform: rotateX(180deg);
+            }
+        }
+
+        /* ============ LANDING ============ */
+        #landing-page {
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        #landing-page.hidden-gate {
+            opacity: 0;
+            transform: scale(0.95);
+            pointer-events: none;
+        }
+
+        #main-content {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.6s ease-in 0.4s;
+        }
+
+        #main-content.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* ============ ANIMATED PAGE BACKGROUND ============ */
+        .page-bg {
+            background: linear-gradient(-45deg, #fce4ec, #f8bbd0, #fce4ec, #f48fb1, #fce4ec, #f8bbd0);
+            background-size: 600% 600%;
+            animation: bgShift 20s ease infinite;
+        }
+
+        @keyframes bgShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            25% {
+                background-position: 50% 0%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            75% {
+                background-position: 50% 100%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Floating hearts behind the board */
+        .bg-heart {
+            position: absolute;
+            pointer-events: none;
+            animation: bgHeartFloat linear infinite;
+            opacity: 0;
+        }
+
+        @keyframes bgHeartFloat {
+            0% {
+                transform: translateY(100vh) rotate(0deg) scale(0.5);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.4;
+            }
+
+            90% {
+                opacity: 0.4;
+            }
+
+            100% {
+                transform: translateY(-10vh) rotate(360deg) scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* ============ LETTER ANIMATIONS ============ */
+        /* Staggered paragraph reveal */
+        @keyframes letterReveal {
+            0% {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .letter-reveal p {
+            opacity: 0;
+            animation: letterReveal 0.8s ease-out forwards;
+        }
+
+        /* Soft glow pulse on letter panel */
+        @keyframes panelGlow {
+
+            0%,
+            100% {
+                box-shadow: 2px 3px 12px rgba(0, 0, 0, 0.12), 0 0 0 rgba(255, 182, 193, 0);
+            }
+
+            50% {
+                box-shadow: 2px 3px 12px rgba(0, 0, 0, 0.12), 0 0 20px rgba(255, 182, 193, 0.15);
+            }
+        }
+
+        .letter-panel.alive {
+            animation: panelGlow 4s ease-in-out infinite;
+        }
+
+        /* Title shimmer effect */
+        @keyframes titleShimmer {
+            0% {
+                background-position: -200% center;
+            }
+
+            100% {
+                background-position: 200% center;
+            }
+        }
+
+        .title-shimmer {
+            background: linear-gradient(90deg, currentColor 40%, rgba(255, 255, 255, 0.6) 50%, currentColor 60%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleShimmer 3s ease-in-out infinite;
+        }
+
+        /* Photo hover lift */
+        .photo-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .photo-hover:hover {
+            transform: scale(1.08) rotate(0deg) !important;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            z-index: 50;
+        }
+
+        /* Cork board subtle breathing */
+        @keyframes corkBreathe {
+
+            0%,
+            100% {
+                box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.1);
+            }
+
+            50% {
+                box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.18);
+            }
+        }
+
+        .cork-board.alive {
+            animation: corkBreathe 6s ease-in-out infinite;
+        }
+
+        /* ============ SCATTERED SANRIO STICKERS ============ */
+        .sanrio-sticker {
+            position: absolute;
+            pointer-events: none;
+            z-index: 45;
+            filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.15));
+            opacity: 0;
+            animation: stickerPopIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+                stickerFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes stickerPopIn {
+            0% {
+                opacity: 0;
+                transform: scale(0) rotate(-20deg);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(var(--sticker-rot, 0deg));
+            }
+        }
+
+        @keyframes stickerFloat {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(var(--sticker-rot, 0deg));
+            }
+
+            50% {
+                transform: translateY(-4px) rotate(var(--sticker-rot, 0deg));
+            }
+        }
+
+        /* ============ VALENTINE FRAME ============ */
+        .wood-frame {
+            background: linear-gradient(145deg, #e11d48 0%, #f43f5e 20%, #be123c 40%, #e11d48 60%, #f43f5e 80%, #be123c 100%);
+            border-radius: 8px;
+            box-shadow:
+                inset 0 0 12px rgba(190, 18, 60, 0.4),
+                0 8px 30px rgba(0, 0, 0, 0.3),
+                0 2px 6px rgba(0, 0, 0, 0.15);
+            position: relative;
+        }
+
+        /* Frame pattern — subtle hearts instead of wood grain */
+        .wood-frame::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 8px;
+            background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 16l-1.1-1C5 11.5 3 9.6 3 7.3 3 5.4 4.4 4 6.3 4c1 0 2 .5 2.7 1.3h2c.7-.8 1.7-1.3 2.7-1.3C15.6 4 17 5.4 17 7.3c0 2.3-2 4.2-5.9 7.7L10 16z' fill='rgba(255,255,255,0.08)'/%3E%3C/svg%3E");
+            background-size: 24px 24px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* ============ VALENTINE BOARD ============ */
+        .cork-board {
+            background-color: #fff5f5;
+            background-image:
+                radial-gradient(ellipse at 20% 50%, rgba(252, 165, 165, 0.25) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 30%, rgba(251, 207, 232, 0.3) 0%, transparent 40%),
+                radial-gradient(ellipse at 50% 80%, rgba(254, 226, 226, 0.3) 0%, transparent 50%);
+            position: relative;
+        }
+
+        /* Subtle lace/heart texture overlay */
+        .cork-board::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15 24l-1.7-1.5C7.5 17.3 4 14.3 4 10.7 4 7.9 6.2 5.7 9 5.7c1.6 0 3.1.7 4 1.9h4c.9-1.2 2.4-1.9 4-1.9 2.8 0 5 2.2 5 5 0 3.6-3.5 6.6-9.3 11.8L15 24z' fill='rgba(244,63,94,0.04)'/%3E%3C/svg%3E");
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* ============ PUSH PIN ============ */
+        .push-pin {
+            width: 14px;
+            height: 14px;
+            background: radial-gradient(circle at 40% 35%, #f9a8d4 0%, #ec4899 60%, #be185d 100%);
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+            position: absolute;
+            z-index: 50;
+        }
+
+        /* ============ LETTER PANEL ============ */
+        .letter-panel {
+            background: #fffef9;
+            border-radius: 4px;
+            box-shadow: 2px 3px 12px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.06);
+            padding: 2rem 2.2rem;
+            transform: rotate(-0.5deg);
+            z-index: 40;
+            /* Faint horizontal lines like notebook paper */
+            background-image: repeating-linear-gradient(transparent, transparent 31px, rgba(200, 180, 180, 0.2) 31px, rgba(200, 180, 180, 0.2) 32px);
+            background-position: 0 3rem;
+            /* Start lines below title */
+            border-top: 3px solid #e8899a;
+        }
+
+        /* ============ SMALL ENVELOPE ============ */
+        .mini-envelope {
+            width: 140px;
+            height: 100px;
+            position: relative;
+        }
+
+        .mini-envelope .env-body {
+            width: 100%;
+            height: 70%;
+            background: #fff;
+            border: 1px solid #e0c8c8;
+            border-radius: 0 0 4px 4px;
+            position: absolute;
+            bottom: 0;
+            overflow: hidden;
+        }
+
+        .mini-envelope .env-flap {
+            width: 0;
+            height: 0;
+            border-left: 70px solid transparent;
+            border-right: 70px solid transparent;
+            border-top: 50px solid #f5e6e6;
+            position: absolute;
+            top: 0;
+            filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.1));
+        }
+
+        /* ============ ORIGAMI HEART ============ */
+        .origami-heart-container {
+            perspective: 400px;
+        }
+
+        /* ============ WASHI TAPE ============ */
+        .washi {
+            position: absolute;
+            height: 18px;
+            background: rgba(255, 180, 190, 0.7);
+            backdrop-filter: blur(2px);
+            z-index: 10;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        /* ============ DOODLES ============ */
+        .doodle {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.7;
+            z-index: 5;
+        }
+
+        /* ============ SCRAPBOOK ENTRY ============ */
+        .scrapbook-enter {
+            animation: slideUp 1.2s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+        }
+
+        .element-enter {
+            animation: fadeInUp 0.6s ease-out both;
+        }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 640px) {
+            .wavy-panel {
+                padding: 0.8rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            .mini-envelope {
+                width: 100px;
+                height: 70px;
+            }
+
+            .mini-envelope .env-flap {
+                border-left: 50px solid transparent;
+                border-right: 50px solid transparent;
+                border-top: 35px solid #f5e6e6;
+            }
+        }
+
+        /* ============ ANIMATED LANDING PAGE ============ */
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .animated-bg {
+            background: linear-gradient(-45deg, #fce4ec, #f8bbd0, #fce4ec, #fff0f0, #fce4ec);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+        }
+
+        @keyframes titleGlow {
+
+            0%,
+            100% {
+                text-shadow: 0 0 10px rgba(244, 63, 94, 0.3), 0 0 20px rgba(244, 63, 94, 0.1);
+            }
+
+            50% {
+                text-shadow: 0 0 20px rgba(244, 63, 94, 0.5), 0 0 40px rgba(244, 63, 94, 0.2);
+            }
+        }
+
+        .title-glow {
+            animation: titleGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes drift {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .drifting-heart {
+            position: absolute;
+            animation: drift linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes sparkle {
+
+            0%,
+            100% {
+                opacity: 0;
+                transform: scale(0);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle, #fff 0%, rgba(255, 255, 255, 0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: sparkle 2s ease-in-out infinite;
+        }
+
+        @keyframes inputPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(251, 113, 133, 0);
+            }
+
+            50% {
+                box-shadow: 0 0 0 10px rgba(251, 113, 133, 0.15);
+            }
+        }
+
+        .input-pulse {
+            animation: inputPulse 2.5s ease-in-out infinite;
+        }
+
+        /* ============ FLOWER BLOOM TRANSITION ============ */
+        #flower-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(ellipse at center, #fff0f0 0%, #fce4ec 50%, #f8bbd0 100%);
+            overflow: hidden;
+        }
+
+        #flower-overlay.active {
+            display: flex;
+        }
+
+        @keyframes petalBloom {
+            0% {
+                transform: rotate(var(--petal-rot)) scale(0) translateY(0);
+                opacity: 0;
+            }
+
+            40% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: rotate(var(--petal-rot)) scale(1.2) translateY(-30px);
+                opacity: 0.9;
+            }
+        }
+
+        @keyframes petalFade {
+            0% {
+                opacity: 0.9;
+                transform: rotate(var(--petal-rot)) scale(1.2) translateY(-30px);
+            }
+
+            100% {
+                opacity: 0;
+                transform: rotate(var(--petal-rot)) scale(2) translateY(-80px);
+            }
+        }
+
+        .petal {
+            position: absolute;
+            width: 50px;
+            height: 80px;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            top: 50%;
+            left: 50%;
+            margin-left: -25px;
+            /* half of width */
+            margin-top: -80px;
+            /* petals grow upward from center */
+            transform-origin: 50% 100%;
+            /* rotate from base/center */
+            opacity: 0;
+        }
+
+        @keyframes centerBloom {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0;
+            }
+
+            50% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        .flower-center {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: radial-gradient(circle, #ffeb3b 40%, #ffcc02 100%);
+            border-radius: 50%;
+            animation: centerBloom 3s ease-out forwards;
+            z-index: 10;
+        }
+
+        @keyframes overlayFadeOut {
+            0% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+
+        /* Falling petals after bloom */
+        @keyframes fallingPetal {
+            0% {
+                transform: translateY(-20px) rotate(0deg) scale(0.8);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100vh) rotate(360deg) scale(0.3);
+                opacity: 0;
+            }
+        }
+
+
+
+        .falling-petal {
+            position: absolute;
+            width: 20px;
+            height: 30px;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* ============ LACE VIEWPORT BORDER ============ */
+        .lace-border {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            border: 18px solid transparent;
+            border-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='20' cy='20' r='8' fill='none' stroke='rgba(255,255,255,0.45)' stroke-width='1.5'/%3E%3Ccircle cx='20' cy='20' r='14' fill='none' stroke='rgba(255,255,255,0.2)' stroke-width='0.8'/%3E%3Ccircle cx='0' cy='0' r='4' fill='rgba(255,255,255,0.15)'/%3E%3Ccircle cx='40' cy='0' r='4' fill='rgba(255,255,255,0.15)'/%3E%3Ccircle cx='0' cy='40' r='4' fill='rgba(255,255,255,0.15)'/%3E%3Ccircle cx='40' cy='40' r='4' fill='rgba(255,255,255,0.15)'/%3E%3C/svg%3E") 18 round;
+        }
+
+        /* ============ SPARKLE PARTICLES ============ */
+        .sparkle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(255, 182, 193, 0.6) 50%, transparent 100%);
+            pointer-events: none;
+            z-index: 2;
+            animation: sparklePulse 2.5s ease-in-out infinite;
+        }
+
+        .sparkle::before {
+            content: '✦';
+            position: absolute;
+            top: -4px;
+            left: -3px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        @keyframes sparklePulse {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scale(0.6);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+
+        /* ============ LOVE DOODLES ============ */
+        .love-doodle {
+            position: absolute;
+            pointer-events: none;
+            z-index: 2;
+            font-family: 'Caveat', cursive;
+            color: rgba(255, 255, 255, 0.55);
+            text-shadow: 0 1px 4px rgba(190, 18, 60, 0.15);
+            user-select: none;
+        }
+
+        .love-doodle.emoji-doodle {
+            font-family: inherit;
+            font-size: 2rem;
+            filter: drop-shadow(0 2px 6px rgba(190, 18, 60, 0.15));
+            opacity: 0.5;
+        }
+
+        /* ============ SOFT GLOW SPOTS ============ */
+        .glow-spot {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            filter: blur(60px);
+            opacity: 0.35;
+            animation: glowBreathe 6s ease-in-out infinite alternate;
+        }
+
+        @keyframes glowBreathe {
+            0% {
+                opacity: 0.2;
+                transform: scale(0.9);
+            }
+
+            100% {
+                opacity: 0.4;
+                transform: scale(1.1);
+            }
+        }
+
+        /* ============ CONTINUOUS FALLING PETALS ============ */
+        .bg-falling-petal {
+            position: absolute;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0;
+            animation: bgPetalFall linear infinite;
+        }
+
+        @keyframes bgPetalFall {
+            0% {
+                transform: translateY(-30px) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.7;
+            }
+
+            90% {
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: translateY(100vh) translateX(40px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* ============ RIBBON BOW ============ */
+        .ribbon-bow {
+            position: absolute;
+            pointer-events: none;
+            z-index: 3;
+            font-size: 3rem;
+            filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.15));
+            opacity: 0.65;
+        }
+
+        /* ============ VALENTINE DECORATIONS ============ */
+        .bg-heart-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z' fill='%23fecaca' opacity='0.15'/%3E%3C/svg%3E");
+            background-size: 30px 30px;
+        }
+
+        .love-stamp {
+            border: 3px double rgba(185, 28, 28, 0.4);
+            color: rgba(185, 28, 28, 0.5);
+            font-family: 'Courier New', monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+            font-size: 0.7rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 80px;
+            transform: rotate(-15deg);
+            background: rgba(255, 255, 255, 0.1);
+            pointer-events: none;
+            mix-blend-mode: multiply;
+        }
+
+        .candy-heart {
+            position: absolute;
+            font-size: 0.7rem;
+            color: #d64040;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            width: 50px;
+            height: 45px;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 90' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 88 C10 60 0 40 0 25 C0 10 10 0 25 0 C35 0 45 10 50 20 C55 10 65 0 75 0 C90 0 100 10 100 25 C100 40 90 60 50 88' fill='%23fecaca' stroke='%23f87171' stroke-width='2'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-size: contain;
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+            line-height: 1;
+            padding-bottom: 5px;
+            z-index: 5;
+            transform: rotate(var(--rot));
+        }
+    </style>
+</head>
+
+<body class="h-screen w-full relative bg-gray-200">
+
+    <!-- ==================== FLOWER BLOOM TRANSITION ==================== -->
+    <div id="flower-overlay">
+        <div class="flower-center"></div>
+        <!-- Petals will be generated by JS -->
+    </div>
+
+    <!-- ==================== LANDING PAGE ==================== -->
+    <div id="landing-page" class="fixed inset-0 z-50 flex flex-col items-center justify-center animated-bg">
+
+        <!-- Drifting hearts (generated by JS for variety) -->
+        <div id="drifting-hearts" class="absolute inset-0 overflow-hidden pointer-events-none"></div>
+
+        <!-- Sparkles layer -->
+        <div id="sparkles" class="absolute inset-0 overflow-hidden pointer-events-none"></div>
+
+        <!-- Floating hearts background (static, CSS-animated) -->
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute text-red-200 text-6xl top-[10%] left-[10%] floating"
+                style="--rot:-15deg; animation-delay:0s;">♥</div>
+            <div class="absolute text-pink-200 text-4xl top-[20%] right-[15%] floating"
+                style="--rot:10deg; animation-delay:1s;">♥</div>
+            <div class="absolute text-red-100 text-8xl bottom-[20%] left-[20%] floating"
+                style="--rot:5deg; animation-delay:2s;">♥</div>
+            <div class="absolute text-pink-100 text-5xl bottom-[15%] right-[10%] floating"
+                style="--rot:-8deg; animation-delay:0.5s;">♥</div>
+            <div class="absolute text-red-200 text-3xl top-[50%] left-[5%] floating"
+                style="--rot:12deg; animation-delay:1.5s;">♥</div>
+            <div class="absolute text-pink-200 text-7xl top-[40%] right-[5%] floating"
+                style="--rot:-5deg; animation-delay:3s;">♥</div>
+            <div class="absolute text-rose-200 text-5xl top-[65%] left-[40%] floating"
+                style="--rot:8deg; animation-delay:2.5s;">♥</div>
+            <div class="absolute text-pink-300 text-3xl top-[75%] right-[25%] floating"
+                style="--rot:-12deg; animation-delay:0.8s;">✿</div>
+            <div class="absolute text-rose-100 text-4xl top-[5%] left-[50%] floating"
+                style="--rot:3deg; animation-delay:1.8s;">♥</div>
+        </div>
+
+        <h1
+            class="text-5xl sm:text-7xl md:text-8xl text-red-400 font-bold text-center font-['Dancing_Script'] transform -rotate-3 mb-8 px-4 relative z-10 title-glow">
+            Happy Valentine's Day!
+        </h1>
+
+        <div class="w-full max-w-xs sm:max-w-sm px-6 relative z-10">
+            <input type="password" id="passcode-input"
+                class="w-full px-5 py-4 text-center text-xl sm:text-2xl border-2 border-dashed border-red-300 rounded-2xl focus:outline-none focus:border-red-400 focus:ring-4 focus:ring-red-100 transition-all bg-white/70 backdrop-blur-sm placeholder-pink-300 text-red-500 font-['Indie_Flower'] shadow-sm input-pulse"
+                placeholder="Enter password...">
+            <p class="text-center mt-4 text-pink-400 text-base sm:text-lg font-['Caveat'] tracking-wide opacity-80">
+                (Check last chat sa pm hihi)
+            </p>
+        </div>
+    </div>
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <div id="main-content" class="fixed inset-0 z-0 flex items-center justify-center p-2 sm:p-4 page-bg">
+
+        <!-- Floating background hearts (behind the board) -->
+        <div id="bg-hearts" class="absolute inset-0 overflow-hidden pointer-events-none z-0"></div>
+
+        <!-- LACE BORDER around entire viewport -->
+        <div class="lace-border"></div>
+
+        <!-- SOFT GLOW SPOTS -->
+        <div class="glow-spot" style="top: 10%; left: 5%; width: 180px; height: 180px; background: #f9a8d4;"></div>
+        <div class="glow-spot"
+            style="bottom: 15%; right: 6%; width: 160px; height: 160px; background: #fda4af; animation-delay: 2s;">
+        </div>
+        <div class="glow-spot"
+            style="top: 60%; left: 8%; width: 140px; height: 140px; background: #fbcfe8; animation-delay: 4s;"></div>
+
+        <!-- SPARKLE PARTICLES (positioned around the card) -->
+        <div class="sparkle" style="top: 8%; left: 3%; animation-delay: 0s;"></div>
+        <div class="sparkle" style="top: 22%; left: 7%; animation-delay: 0.8s;"></div>
+        <div class="sparkle" style="top: 75%; left: 5%; animation-delay: 1.6s;"></div>
+        <div class="sparkle" style="top: 90%; left: 10%; animation-delay: 0.4s;"></div>
+        <div class="sparkle" style="top: 12%; right: 4%; animation-delay: 1.2s;"></div>
+        <div class="sparkle" style="top: 45%; right: 6%; animation-delay: 2s;"></div>
+        <div class="sparkle" style="top: 82%; right: 3%; animation-delay: 0.6s;"></div>
+        <div class="sparkle" style="top: 55%; right: 8%; animation-delay: 1.4s;"></div>
+
+        <!-- LOVE DOODLES (handwritten text scattered) -->
+        <div class="love-doodle" style="top: 6%; left: 2%; font-size: 1.6rem; transform: rotate(-12deg);">xoxo</div>
+        <div class="love-doodle" style="bottom: 8%; left: 3%; font-size: 1.3rem; transform: rotate(8deg);">be mine ♡
+        </div>
+        <div class="love-doodle" style="top: 15%; right: 2%; font-size: 1.2rem; transform: rotate(6deg);">forever</div>
+        <div class="love-doodle" style="bottom: 12%; right: 3%; font-size: 1.4rem; transform: rotate(-5deg);">always
+            yours~</div>
+        <div class="love-doodle" style="top: 45%; left: 1%; font-size: 1.1rem; transform: rotate(-8deg);">love love
+        </div>
+
+        <!-- EMOJI DOODLES (specific spot accents) -->
+        <div class="love-doodle emoji-doodle" style="top: 30%; left: 3%; transform: rotate(15deg);">💋</div>
+        <div class="love-doodle emoji-doodle"
+            style="bottom: 25%; right: 4%; transform: rotate(-10deg); font-size: 1.5rem;">💌</div>
+        <div class="love-doodle emoji-doodle" style="top: 85%; left: 6%; font-size: 1.8rem;">🌹</div>
+        <div class="love-doodle emoji-doodle" style="top: 50%; right: 3%; font-size: 1.6rem; transform: rotate(12deg);">
+            💕</div>
+
+        <!-- RIBBON BOWS -->
+        <div class="ribbon-bow" style="top: 1%; left: 1%; transform: rotate(-15deg);">🎀</div>
+        <div class="ribbon-bow" style="bottom: 2%; right: 1%; transform: rotate(10deg); font-size: 2.5rem;">🎀</div>
+
+        <!-- FALLING PETALS CONTAINER -->
+        <div id="bg-petals" class="absolute inset-0 overflow-hidden pointer-events-none z-1"></div>
+
+        <!-- VALENTINE FRAME -->
+        <div class="wood-frame relative w-full max-w-lg sm:max-w-xl md:max-w-2xl h-[92vh] sm:h-[90vh] overflow-hidden">
+
+            <!-- VALENTINE BOARD — inside the frame -->
+            <div id="scrapbook-card"
+                class="cork-board absolute inset-[12px] sm:inset-[16px] md:inset-[18px] z-10 overflow-hidden">
+
+                <!-- ===== STICKER 1: Top-Left ===== -->
+                <div class="absolute top-[3%] left-[3%] z-30 floating" style="--rot:-5deg; animation-delay:0.2s;">
+                    <div class="relative">
+                        <div class="washi w-16 sm:w-20 -top-2 left-4 rotate-3"></div>
+                        <img id="sticker-top-left" src="https://placehold.co/160x180/ffcccc/ff4466?text=Photo+1"
+                            alt="Photo"
+                            class="photo-hover w-36 h-40 sm:w-40 sm:h-44 object-cover rounded-sm shadow-md border-2 border-white bg-white p-1 transform -rotate-3">
+                    </div>
+                </div>
+
+                <!-- ===== Red heart sticker (between photo 1 & 2) ===== -->
+                <div class="absolute top-[30%] left-[16%] z-20 pulse-heart" style="--rot:5deg; animation-delay:0.8s;">
+                    <div class="text-3xl sm:text-4xl drop-shadow-md">❤️</div>
+                </div>
+
+                <!-- ===== STICKER: "LOVE LOTS" torn paper ===== -->
+                <div class="absolute top-[66%] left-[1%] sm:left-[2%] z-20 transform -rotate-[6deg]">
+                    <div class="bg-white/90 px-2 py-1 shadow-sm"
+                        style="clip-path: polygon(2% 0%, 98% 3%, 100% 100%, 0% 97%);">
+                        <p class="font-['Caveat'] text-[10px] sm:text-xs text-red-500 font-bold whitespace-nowrap">LOVE
+                            LOTS</p>
+                    </div>
+                </div>
+
+                <!-- ===== STICKER 2: Middle-Left (Photo Style) ===== -->
+                <div class="absolute top-[35%] left-[3%] z-30 floating" style="--rot:2deg; animation-delay:1.2s;">
+                    <div class="relative">
+                        <div class="washi w-16 sm:w-20 -top-2 left-3 -rotate-2"></div>
+                        <img id="sticker-mid-left" src="https://placehold.co/120x100/ffffff/333333?text=Photo+2"
+                            alt="Photo"
+                            class="photo-hover w-36 h-36 sm:w-40 sm:h-40 object-cover rounded-sm shadow-md border-2 border-white bg-white p-1 transform rotate-1">
+                    </div>
+                </div>
+
+                <!-- ===== STICKER 3: Bottom-Left (Photo Style) ===== -->
+                <div class="absolute bottom-[3%] left-[3%] z-30 floating" style="--rot:-3deg; animation-delay:1.8s;">
+                    <div class="relative">
+                        <div class="washi w-16 sm:w-20 -top-2 left-5 rotate-4"></div>
+                        <img id="sticker-bottom-right" src="https://placehold.co/160x160/e8f0fe/5577aa?text=Photo+3"
+                            alt="Photo"
+                            class="photo-hover w-36 h-40 sm:w-40 sm:h-44 object-cover rounded-sm shadow-md border-2 border-white bg-white p-1 transform -rotate-2">
+                    </div>
+                </div>
+
+                <!-- ===== LETTER PANEL ===== -->
+                <div class="letter-panel absolute top-[3%] right-[3%] sm:right-[4%] w-[58%] sm:w-[56%] h-[82%] overflow-y-auto z-40 element-enter"
+                    style="animation-delay: 0.8s;">
+                    <!-- Push pins -->
+                    <div class="push-pin -top-[6px] left-[15%]"></div>
+                    <div class="push-pin -top-[6px] right-[15%]"></div>
+
+                    <!-- Watermark Pattern -->
+                    <div class="bg-heart-pattern absolute inset-0 z-0 opacity-30 pointer-events-none"></div>
+
+                    <!-- Stamp -->
+                    <div class="love-stamp absolute bottom-8 right-6 z-10 opacity-70">
+                        <div class="absolute inset-1 border border-red-800 rounded-full opacity-50"></div>
+                        <span class="text-center leading-tight transform -rotate-6">Sent<br>with<br>Love</span>
+                    </div>
+
+                    <h2 id="letter-title"
+                        class="font-['Dancing_Script'] text-2xl sm:text-3xl text-rose-500 mb-3 pb-2 border-b border-rose-200/60">
+                        To my special someone,
+                    </h2>
+                    <div id="letter-body"
+                        class="font-['Cormorant_Garamond'] italic text-base sm:text-lg text-gray-600 leading-[2] space-y-3 mt-3">
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                        <p>You are the best thing that has happened to me.</p>
+                        <p>Love you lots more than words can say. ♥</p>
+                    </div>
+                </div>
+
+                <!-- ===== ORIGAMI HEART (bottom-right, smaller) ===== -->
+                <div class="absolute bottom-[4%] right-[4%] z-30 pulse-heart"
+                    style="--rot:-10deg; animation-delay:1.5s;">
+                    <div class="origami-heart-container">
+                        <svg width="60" height="65" viewBox="0 0 100 110" class="drop-shadow-lg">
+                            <path d="M50 15 L10 40 L50 55 Z" fill="#f7b0be" />
+                            <path d="M50 15 L90 40 L50 55 Z" fill="#f4a0b0" />
+                            <path d="M10 40 L50 55 L50 100 Z" fill="#e8899a" />
+                            <path d="M90 40 L50 55 L50 100 Z" fill="#f09aaa" />
+                            <line x1="50" y1="15" x2="50" y2="100" stroke="#d87a8a" stroke-width="0.5" opacity="0.5" />
+                            <text id="origami-letter" x="50" y="58" font-family="'Caveat', cursive" font-weight="700"
+                                font-size="32" fill="#fff" text-anchor="middle" dominant-baseline="middle"
+                                style="filter:drop-shadow(1px 1px 1px rgba(0,0,0,0.2))">M</text>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- ===== MINI ENVELOPE (bottom-center) ===== -->
+                <div class="absolute bottom-[3%] left-[38%] z-25">
+                    <div class="mini-envelope">
+                        <!-- Envelope body -->
+                        <div class="env-body">
+                            <!-- Kiss marks inside envelope -->
+                            <div
+                                class="absolute inset-0 flex flex-wrap items-center justify-center gap-1 p-2 opacity-40">
+                                <span class="text-red-400 text-lg transform rotate-12">💋</span>
+                                <span class="text-red-300 text-sm transform -rotate-6">💋</span>
+                                <span class="text-red-400 text-xs transform rotate-45">💋</span>
+                                <span class="text-red-300 text-lg transform -rotate-20">💋</span>
+                                <span class="text-red-400 text-sm transform rotate-30">💋</span>
+                                <span class="text-red-300 text-xs transform -rotate-45">💋</span>
+                            </div>
+                        </div>
+                        <!-- Envelope flap (triangle) -->
+                        <div class="env-flap"></div>
+                    </div>
+                </div>
+
+                <!-- ===== DECORATIONS: Candy Hearts ===== -->
+                <div class="candy-heart top-[15%] left-[35%] floating" style="--rot:15deg; animation-delay:0.5s;">XOXO
+                </div>
+                <div class="candy-heart bottom-[25%] right-[35%] floating" style="--rot:-10deg; animation-delay:2.2s;">
+                    BE<br>MINE</div>
+                <div class="candy-heart top-[60%] left-[8%] floating" style="--rot:5deg; animation-delay:1.2s;">
+                    LOVE<br>YOU</div>
+                <div class="candy-heart bottom-[5%] left-[25%] floating" style="--rot:-5deg; animation-delay:2.8s;">
+                    CUTIE</div>
+
+                <!-- ===== DECORATION: Cupid Arrow ===== -->
+                <div
+                    class="absolute top-[2%] left-[45%] w-24 h-12 z-20 opacity-80 pointer-events-none transform -rotate-12">
+                    <svg viewBox="0 0 100 50" fill="none" stroke="#e11d48" stroke-width="2" stroke-linecap="round">
+                        <path d="M5 25 L95 25" />
+                        <path d="M75 15 L95 25 L75 35" />
+                        <path d="M5 25 L15 15" />
+                        <path d="M5 25 L15 35" />
+                        <path d="M40 18 Q50 5 60 18 T80 18" stroke-width="1.5" stroke-opacity="0.5" fill="none"
+                            class="animate-pulse" />
+                    </svg>
+                </div>
+
+            </div><!-- end cork-board -->
+        </div><!-- end valentine-frame -->
+    </div><!-- end main-content -->
+
+    <!-- Background Music -->
+    <audio id="bg-music" src="Say Yes.mp3" preload="auto"></audio>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
