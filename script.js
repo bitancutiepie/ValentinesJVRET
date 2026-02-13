@@ -303,12 +303,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    passcodeInput.addEventListener('input', () => {
-        const value = passcodeInput.value.trim().toLowerCase();
-        if (valentines[value]) {
-            unlockGate(value);
-        }
-    });
+    // Removed auto-unlock on input to support similar passwords (e.g., "ok" vs "okie")
+    // Users must now explicitly press Enter to submit.
 
     function checkCode() {
         const value = passcodeInput.value.trim().toLowerCase();
@@ -410,8 +406,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const video = document.createElement('video');
                 video.src = 'bokek.mp4';
                 video.style.cssText = 'width:100%;height:auto;border-radius:4px;display:block;';
-                video.playsInline = true;
+
+                // CRITICAL FOR iOS/iPadOS compatibility
+                video.setAttribute('playsinline', '');
+                video.setAttribute('muted', '');
+                video.setAttribute('autoplay', '');
                 video.muted = true;
+                video.preload = 'auto';
 
                 // Add a cute flower accent to the corner
                 const flower = document.createElement('div');
@@ -423,19 +424,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 videoOverlay.appendChild(videoContainer);
                 document.body.appendChild(videoOverlay);
 
-                // Fade in the video
-                requestAnimationFrame(() => {
-                    videoOverlay.style.opacity = '1';
-                    videoContainer.style.transform = 'scale(1)';
-                    video.play().catch(() => { });
-                });
+                // We'll use a safety timeout to ensure the user isn't stuck if the video fails to play/end
+                let transitionTriggered = false;
+                const proceedToScrapbook = () => {
+                    if (transitionTriggered) return;
+                    transitionTriggered = true;
 
-                // When video ends, fade out and reveal scrapbook
-                video.addEventListener('ended', () => {
                     videoOverlay.style.opacity = '0';
                     videoContainer.style.transform = 'scale(0.9)';
 
-                    // Trigger Heart Explosion right as video ends
+                    // Trigger Heart Explosion right as video ends or is skipped
                     triggerHeartExplosion();
 
                     setTimeout(() => {
@@ -448,17 +446,35 @@ document.addEventListener('DOMContentLoaded', () => {
                             scatterSanrioStickers(person.theme.sanrioStickers);
                         }
                     }, 600);
-                });
+                };
 
-                // Fallback: if video fails to load, skip to scrapbook
-                video.addEventListener('error', () => {
-                    videoOverlay.remove();
-                    mainContent.classList.add('visible');
-                    animateScrapbookEntry();
-                    if (person.theme && person.theme.sanrioStickers) {
-                        scatterSanrioStickers(person.theme.sanrioStickers);
+                // Fade in the video
+                requestAnimationFrame(() => {
+                    videoOverlay.style.opacity = '1';
+                    videoContainer.style.transform = 'scale(1)';
+
+                    // iOS sometimes requires load() before play() for dynamic elements
+                    video.load();
+
+                    const playPromise = video.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(error => {
+                            console.log("Autoplay blocked or failed:", error);
+                            // If blocked, wait 2 seconds then skip so they aren't stuck
+                            setTimeout(proceedToScrapbook, 2000);
+                        });
                     }
                 });
+
+                // When video ends, reveal scrapbook
+                video.addEventListener('ended', proceedToScrapbook);
+
+                // Fallback: if video fails to load, skip to scrapbook
+                video.addEventListener('error', proceedToScrapbook);
+
+                // Safety timeout: if video is longer than expected or stuck
+                // Adjusted to 10 seconds as a reasonable limit for a transition video
+                setTimeout(proceedToScrapbook, 10000);
             });
         }, 800);
     }
