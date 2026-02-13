@@ -398,15 +398,67 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             landingPage.style.display = 'none';
 
-            // 3. Play flower bloom, THEN show the scrapbook
+            // 3. Play flower bloom, THEN play video, THEN show the scrapbook
             playFlowerBloom(() => {
-                mainContent.classList.add('visible');
-                animateScrapbookEntry();
+                // 4. Play the bokeh video transition in a themed frame
+                const videoOverlay = document.createElement('div');
+                videoOverlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(252, 228, 236, 0.85);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.6s ease;backdrop-filter:blur(4px);';
 
-                // Scatter stickers AFTER bloom
-                if (person.theme && person.theme.sanrioStickers) {
-                    scatterSanrioStickers(person.theme.sanrioStickers);
-                }
+                const videoContainer = document.createElement('div');
+                videoContainer.style.cssText = 'position:relative;width:90%;max-width:650px;background:#fff;padding:8px;border-radius:12px;box-shadow:0 15px 45px rgba(190, 18, 60, 0.2);border:10px solid #fff;outline:3px solid #f9a8d4;transform:scale(0.85);transition:transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);';
+
+                const video = document.createElement('video');
+                video.src = 'bokek.mp4';
+                video.style.cssText = 'width:100%;height:auto;border-radius:4px;display:block;';
+                video.playsInline = true;
+                video.muted = true;
+
+                // Add a cute flower accent to the corner
+                const flower = document.createElement('div');
+                flower.innerHTML = '🌸';
+                flower.style.cssText = 'position:absolute;top:-25px;right:-25px;font-size:40px;';
+                videoContainer.appendChild(flower);
+
+                videoContainer.appendChild(video);
+                videoOverlay.appendChild(videoContainer);
+                document.body.appendChild(videoOverlay);
+
+                // Fade in the video
+                requestAnimationFrame(() => {
+                    videoOverlay.style.opacity = '1';
+                    videoContainer.style.transform = 'scale(1)';
+                    video.play().catch(() => { });
+                });
+
+                // When video ends, fade out and reveal scrapbook
+                video.addEventListener('ended', () => {
+                    videoOverlay.style.opacity = '0';
+                    videoContainer.style.transform = 'scale(0.9)';
+
+                    // Trigger Heart Explosion right as video ends
+                    triggerHeartExplosion();
+
+                    setTimeout(() => {
+                        videoOverlay.remove();
+                        mainContent.classList.add('visible');
+                        animateScrapbookEntry();
+
+                        // Scatter stickers AFTER video
+                        if (person.theme && person.theme.sanrioStickers) {
+                            scatterSanrioStickers(person.theme.sanrioStickers);
+                        }
+                    }, 600);
+                });
+
+                // Fallback: if video fails to load, skip to scrapbook
+                video.addEventListener('error', () => {
+                    videoOverlay.remove();
+                    mainContent.classList.add('visible');
+                    animateScrapbookEntry();
+                    if (person.theme && person.theme.sanrioStickers) {
+                        scatterSanrioStickers(person.theme.sanrioStickers);
+                    }
+                });
             });
         }, 800);
     }
@@ -557,4 +609,43 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     createFallingPetals();
+
+    // ============================================================
+    //  HEART EXPLOSION TRIGGER
+    // ============================================================
+    function triggerHeartExplosion() {
+        const symbols = ['❤️', '💖', '💗', '💓', '💝', '💕'];
+        const count = 25;
+        const container = document.body;
+
+        for (let i = 0; i < count; i++) {
+            const heart = document.createElement('div');
+            heart.className = 'exploding-heart';
+            heart.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+
+            // Match center of screen
+            heart.style.left = '50%';
+            heart.style.top = '50%';
+
+            // Randomize trajectory (X and Y distance)
+            const angle = Math.random() * Math.PI * 2;
+            const distance = 150 + Math.random() * 300;
+            const tx = Math.cos(angle) * distance;
+            const ty = Math.sin(angle) * distance;
+            const rot = (Math.random() - 0.5) * 360;
+
+            heart.style.setProperty('--tx', `${tx}px`);
+            heart.style.setProperty('--ty', `${ty}px`);
+            heart.style.setProperty('--rot', `${rot}deg`);
+
+            // Random delay and duration
+            heart.style.animationDelay = (Math.random() * 0.2) + 's';
+            heart.style.animationDuration = (0.6 + Math.random() * 0.6) + 's';
+
+            container.appendChild(heart);
+
+            // Housekeeping
+            setTimeout(() => heart.remove(), 2000);
+        }
+    }
 });
